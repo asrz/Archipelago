@@ -74,7 +74,7 @@ def generate_output(world: PokemonCrystalWorld, output_directory: str) -> None:
                     address = data.rom_addresses[base_flag + "_" + str(i)] + 1
                     write_bytes(patched_rom, [new_pokemon], address)
 
-    if world.options.randomize_starters:
+    if world.options.randomize_starters > 0:
         for i in range(1, 5):
             cyndaquil_address = data.rom_addresses["AP_Starter_CYNDAQUIL_" + str(i)] + 1
             cyndaquil_mon = data.pokemon[world.generated_starters[0][0]].id

@@ -33,10 +33,14 @@ class RequireItemfinder(DefaultOnToggle):
     display_name = "Require Itemfinder"
 
 
-class RandomizeStarters(Toggle):
+class RandomizeStarters(Choice):
     """Randomizes species of starter Pokemon"""
     display_name = "Randomize Starters"
     default = 0
+    option_vanilla = 0
+    option_randomize = 1
+    option_unevolved = 2
+    
 
 
 class RandomizeWilds(Toggle):

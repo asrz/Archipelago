@@ -312,12 +312,19 @@ class PokemonCrystalWorld(World):
                         pkmn_data.base_stats[4] += int(round(dist[4] / total_dist * total_stats))
 
 
-        if self.options.randomize_starters:
+        if self.options.randomize_starters > 0:
+            unevolved_pokemon = [ pkmn_name for pkmn_name, pkmn_data in self.generated_pokemon.items() if len(pkmn_data.evolutions) > 0 ]
             for evo_line in self.generated_starters:
                 rival_fights = [(trainer_name, trainer) for trainer_name, trainer in crystal_data.trainers.items() if
                                 trainer_name.startswith("RIVAL_" + evo_line[0])]
 
-                evo_line[0] = get_random_pokemon(self.random)
+                if self.options.randomize_starters == "randomize":
+                    evo_line[0] = get_random_pokemon(self.random)
+                elif self.options.randomize_starters == "unevolved":
+                    evo_line[0] = self.random.choice(unevolved_pokemon)
+                else:
+                    raise FillError(f"Unhandled option {self.options.randomize_starters} for player {self.player}")
+               
                 for trainer_name, trainer in rival_fights:
                     set_rival_fight(trainer_name, trainer, evo_line[0])
 
@@ -440,7 +447,7 @@ class PokemonCrystalWorld(World):
         return slot_data
 
     def write_spoiler(self, spoiler_handle) -> None:
-        if self.options.randomize_starters:
+        if self.options.randomize_starters > 0:
             spoiler_handle.write(f"\n\nStarter Pokemon ({self.multiworld.player_name[self.player]}):\n\n")
             for evo_line in self.generated_starters:
                 evo_string = f"{evo_line[0]}"
