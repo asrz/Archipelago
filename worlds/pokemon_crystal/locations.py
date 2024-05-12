@@ -51,14 +51,19 @@ def reverse_offset_flag(location_id: int) -> int:
     return location_id - BASE_OFFSET
 
 
-def create_locations(world: PokemonCrystalWorld, regions: Dict[str, Region], randomize_hidden_items: bool) -> None:
+def create_locations(world: PokemonCrystalWorld, regions: Dict[str, Region], randomize_hidden_items: int, randomize_badges: int) -> None:
     for region_name, region_data in data.regions.items():
         region = regions[region_name]
         filtered_locations = {}
-        if not randomize_hidden_items:
-            filtered_locations = [loc for loc in region_data.locations if not "Hidden" in data.locations[loc].tags]
-        else:
-            filtered_locations = region_data.locations
+        
+        filtered_locations = [loc for loc in region_data.locations if not "Hidden" in data.locations[loc].tags and not "Badge" in data.locations[loc].tags]
+        
+        if randomize_hidden_items > 0:
+            filtered_locations.extend([loc for loc in region_data.locations if "Hidden" in data.locations[loc].tags])
+            
+        if randomize_badges > 0:
+            filtered_locations.extend([loc for loc in region_data.locations if "Badge" in data.locations[loc].tags])
+                                       
         for location_name in filtered_locations:
             location_data = data.locations[location_name]
             location = PokemonCrystalLocation(

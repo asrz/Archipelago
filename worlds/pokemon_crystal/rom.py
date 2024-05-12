@@ -114,12 +114,24 @@ def generate_output(world: PokemonCrystalWorld, output_directory: str) -> None:
         write_bytes(patched_rom, [33, 0, 66, 2, 100, 4],
                     data.rom_addresses["AP_Prob_WaterMon"])
 
-    if world.options.full_tmhm_compatibility:
+    if world.options.tmhm_compatibility > 0:
         address = data.rom_addresses["BaseData"]
         for i in range(251):
+            bitmask = [255, 255, 255, 255, 255, 255, 255, 15]
+            if world.options.tmhm_compatibility == "randomize":
+                for i in range(7):
+                    bitmask[i] = random.randint(0,255)
+                bitmask[7] = random.randint(0,15)
             address += 24
-            write_bytes(patched_rom, [255, 255, 255, 255, 255, 255, 255, 15], address)
+            write_bytes(patched_rom, bitmask, address)
             address += 8
+
+    if world.options.fast_egg_hatching:
+        address = data.rom_addresses["BaseData"]
+        for i in range(251):
+            address += 15
+            write_bytes(patched_rom, [1], address)
+            address += 17
 
     if world.options.randomize_learnsets > 0:
         for pkmn_name, pkmn_data in world.generated_pokemon.items():
@@ -129,7 +141,22 @@ def generate_output(world: PokemonCrystalWorld, output_directory: str) -> None:
                 move_id = data.moves[move.move].id
                 write_bytes(patched_rom, [move.level, move_id], address)
                 address += 2
-
+    
+    if world.options.randomize_stats > 0:
+        address = data.rom_addresses["BaseData"]
+        for pkmn_name, pkmn_data in world.generated_pokemon.items():
+            address += 1
+            write_bytes(patched_rom, pkmn_data.base_stats, address)
+            address += 31
+    
+    if world.options.randomize_evolutions > 0:
+        for pkmn_name, pkmn_data in world.generated_pokemon.items():
+            address = data.rom_addresses["AP_EvosAttacks_" + pkmn_name]
+            for evolution in pkmn_data.evolutions:
+                address += len(evolution) - 1
+                write_bytes(patched_rom, [world.generated_pokemon[evolution[-1]].id], address)
+                address += 1
+    
     for trainer_name, trainer_data in world.generated_trainers.items():
         address = data.rom_addresses["AP_TrainerParty_" + trainer_name]
         address += trainer_data.name_length + 1  # skip name and type

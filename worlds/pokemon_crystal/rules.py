@@ -65,7 +65,7 @@ def set_rules(world: PokemonCrystalWorld) -> None:
         return world.multiworld.get_location(location, world.player)
 
     def hidden():
-        return world.options.randomize_hidden_items
+        return world.options.randomize_hidden_items == "randomize"
 
     # Goal
     if world.options.goal == 1:

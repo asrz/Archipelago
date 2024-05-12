@@ -87,6 +87,7 @@ class PokemonCrystalData:
     trainers: Dict[str, TrainerData]
     pokemon: Dict[str, PokemonData]
     moves: Dict[str, MoveData]
+    types: List[str]
 
     def __init__(self) -> None:
         self.rom_addresses = {}
@@ -98,6 +99,7 @@ class PokemonCrystalData:
         self.trainers = {}
         self.pokemon = {}
         self.moves = {}
+        self.types = []
 
 
 def load_json_data(data_name: str) -> Union[List[Any], Dict[str, Any]]:
@@ -122,6 +124,9 @@ def _init() -> None:
     pokemon_data = data_json["pokemon"]
     move_data = data_json["moves"]
     trainer_data = data_json["trainers"]
+    
+    data.types = [ 'NORMAL', 'FIGHTING', 'FLYING', 'POISON', 'GROUND', 'ROCK', 'BUG', 'GHOST', 'STEEL', 
+                  'FIRE', 'WATER', 'GRASS', 'ELECTRIC', 'PSYCHIC_TYPE', 'ICE', 'DRAGON', 'DARK' ]
 
     claimed_locations: Set[str] = set()
     claimed_warps: Set[str] = set()
