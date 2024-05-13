@@ -236,6 +236,35 @@ class PokemonCrystalWorld(World):
                     new_learnset[0] = get_random_move(pkmn_data, damaging_move=True)
                 self.generated_pokemon[pkmn_name] = self.generated_pokemon[pkmn_name]._replace(learnset=new_learnset)
         
+        #logic and levels taken from Universal pokemon randomizer
+        if self.options.fix_impossible_evolutions:
+            for pkmn_name, pkmn_data in self.generated_pokemon.items():
+                for evolution in pkmn_data.evolutions:
+                    method = evolution[0]
+                    if method == 'EVOLVE_TRADE':
+                        item = evolution[1]
+                        if item == 'KINGS_ROCK':
+                            if pkmn_name == 'POLIWHIRL':
+                                evolution[0] = 'EVOLVE_LEVEL'
+                                evolution[1] = 37
+                            elif pkmn_name == 'SLOWPOKE':
+                                evolution[0] = 'EVOLVE_ITEM'
+                                evolution[1] = 'WATER_STONE'
+                        elif item == 'METAL_COAT':
+                            evolution[0] = 'EVOLVE_LEVEL'
+                            evolution[1] = 30
+                        elif item == 'DRAGON_SCALE':
+                            evolution[0] = 'EVOLVE_LEVEL',
+                            evolution[1] = 40
+                        elif item == 'UP_GRADE':
+                            evolution[0] = 'EVOLVE_LEVEL'
+                            evolution[1] = 30
+                        else:
+                            evolution[0] = 'EVOLVE_LEVEL',
+                            evolution[1] = 37
+                        
+                
+        
         if self.options.randomize_evolutions:
             for _ in range(5):
                 evolved_pokemon = list(self.generated_pokemon.keys())

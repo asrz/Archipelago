@@ -152,7 +152,11 @@ class ExpModifier(Range):
     default = 20
     range_start = 1
     range_end = 255
-
+    
+class FixImpossibleEvolutions(Toggle):
+    """Replaces impossible evolutions (trades) with possible ones (evolution stones or level up)"""
+    display_name = "Fix Impossible Evolutions"
+    default = 0
 
 class ItemReceiveSound(DefaultOnToggle):
     """Play item received sound on receiving a remote item"""
@@ -186,5 +190,6 @@ class PokemonCrystalOptions(PerGameCommonOptions):
     blind_trainers: BlindTrainers
     better_marts: BetterMarts
     experience_modifier: ExpModifier
+    fix_impossible_evolutions: FixImpossibleEvolutions
     item_receive_sound: ItemReceiveSound
     fast_egg_hatching: FastEggHatching
